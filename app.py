@@ -278,7 +278,7 @@ def main():
         if st.session_state.processed_result:
             # Display result in expander with code block
             with st.expander("読み取り結果を確認", expanded=True):
-                st.code(st.session_state.processed_result, language=st.session_state.output_format)
+                st.code(st.session_state.processed_result, language=st.session_state.output_format, height=500)
 
             # Download button
             download_filename = generate_download_filename(

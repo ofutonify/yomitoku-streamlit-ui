@@ -79,12 +79,12 @@ def validate_file_format(file_path: Path) -> bool:
 
 def run_yomitoku(
     input_path: Path, output_format: str, progress_callback=None
-) -> Tuple[bool, Optional[Path], Optional[str]]:
+) -> Tuple[bool, Optional[Path], Optional[Path], Optional[str]]:
     """
     Run yomitoku command
 
     Returns:
-        Tuple of (success, output_file_path, error_message)
+        Tuple of (success, output_file_path, output_dir, error_message)
     """
     ensure_temp_dir()
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -117,22 +117,22 @@ def run_yomitoku(
 
         if result.returncode != 0:
             error_msg = result.stderr or "Unknown error occurred"
-            return False, None, error_msg
+            return False, None, None, error_msg
 
         # Find output file
         output_files = list(output_dir.glob(f"*.{output_format}"))
         if not output_files:
-            return False, None, "No output file generated"
+            return False, None, None, "No output file generated"
 
         if progress_callback:
             progress_callback(1.0, "Complete!")
 
-        return True, output_files[0], None
+        return True, output_files[0], output_dir, None
 
     except subprocess.TimeoutExpired:
-        return False, None, "Processing timeout (exceeded 5 minutes)"
+        return False, None, None, "Processing timeout (exceeded 5 minutes)"
     except Exception as e:
-        return False, None, f"Error: {str(e)}"
+        return False, None, None, f"Error: {str(e)}"
 
 
 def generate_download_filename(original_name: str, format_ext: str) -> str:
@@ -242,7 +242,7 @@ def main():
                 status_text.text(text)
 
             # Run yomitoku
-            success, output_file, error_msg = run_yomitoku(
+            success, output_file, output_dir, error_msg = run_yomitoku(
                 st.session_state.input_image_path,
                 st.session_state.output_format,
                 progress_callback=update_progress,
@@ -254,6 +254,11 @@ def main():
                     with open(output_file, "r", encoding="utf-8") as f:
                         result_content = f.read()
                     st.session_state.processed_result = result_content
+
+                    # Cleanup temporary files
+                    cleanup_temp_files(st.session_state.input_image_path)
+                    cleanup_temp_files(output_dir)
+
                     st.success("処理が完了しました！")
                 except Exception as e:
                     st.error(f"Failed to read result: {e}")

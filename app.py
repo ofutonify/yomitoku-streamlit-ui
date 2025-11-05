@@ -276,10 +276,6 @@ def main():
         st.title("Results")
 
         if st.session_state.processed_result:
-            # Display result in expander with code block
-            with st.expander("読み取り結果を確認", expanded=True):
-                st.code(st.session_state.processed_result, language=st.session_state.output_format, height=500)
-
             # Download button
             download_filename = generate_download_filename(
                 st.session_state.original_filename,
@@ -293,6 +289,10 @@ def main():
                 mime="text/plain",
                 use_container_width=True,
             )
+
+            # Display result in expander with code block
+            with st.expander("読み取り結果を確認", expanded=True):
+                st.code(st.session_state.processed_result, language=st.session_state.output_format, height=500)
         else:
             st.info("処理を実行すると、ここに結果が表示されます")
 

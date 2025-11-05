@@ -213,6 +213,8 @@ def main():
             except Exception as e:
                 st.error(f"Failed to load image: {e}")
 
+    # Right column - Output and Results
+    with right_col:
         # Output format selection
         st.subheader("3. Select Output Format")
         selected_format = st.radio(
@@ -270,10 +272,6 @@ def main():
             # Clear progress
             progress_bar.empty()
             status_text.empty()
-
-    # Right column - Results
-    with right_col:
-        st.title("Results")
 
         if st.session_state.processed_result:
             # Download button

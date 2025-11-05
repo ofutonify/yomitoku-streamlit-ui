@@ -10,6 +10,8 @@ StreamlitベースのYomitoku OCR WebインターフェースUI
 
 Yomitokuのインストール方法は、上記リポジトリのREADMEを参照してください。
 
+![UI Preview](screenshots/yomitoku_streamlit_ui.jpg)
+
 ## インストール
 
 ```bash

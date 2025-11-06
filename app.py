@@ -209,7 +209,7 @@ def main():
                     st.error(f"非対応のファイル形式です。サポート形式: {', '.join(SUPPORTED_FORMATS)}")
                 else:
                     image = Image.open(st.session_state.input_image_path)
-                    st.image(image, use_container_width=True)
+                    st.image(image, width='stretch')
             except Exception as e:
                 st.error(f"Failed to load image: {e}")
 
@@ -234,7 +234,7 @@ def main():
             and validate_file_format(st.session_state.input_image_path)
         )
 
-        if st.button("🚀 Execute Yomitoku", disabled=not can_execute, use_container_width=True):
+        if st.button("🚀 Execute Yomitoku", disabled=not can_execute, width='stretch'):
             # Progress bar
             progress_bar = st.progress(0)
             status_text = st.empty()
@@ -285,7 +285,7 @@ def main():
                 data=st.session_state.processed_result,
                 file_name=download_filename,
                 mime="text/plain",
-                use_container_width=True,
+                width='stretch',
             )
 
             # Display result in expander with code block

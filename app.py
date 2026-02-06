@@ -197,6 +197,13 @@ def main():
 
         # Update session state
         if current_image_path:
+            # Clean up previous temp file to avoid accumulation from reruns
+            old_path = st.session_state.input_image_path
+            if old_path and old_path != current_image_path and old_path.exists():
+                try:
+                    old_path.unlink()
+                except Exception:
+                    pass
             st.session_state.input_image_path = current_image_path
             st.session_state.original_filename = current_filename
 
@@ -261,13 +268,18 @@ def main():
                     cleanup_temp_files(st.session_state.input_image_path)
                     cleanup_temp_files(output_dir)
 
+                    st.session_state.input_image_path = None
                     st.success("処理が完了しました！")
                 except Exception as e:
                     st.error(f"Failed to read result: {e}")
                     st.session_state.processed_result = None
             else:
                 st.error(f"処理に失敗しました。再度実行してください\n\nError: {error_msg}")
+                cleanup_temp_files(st.session_state.input_image_path)
+                if output_dir:
+                    cleanup_temp_files(output_dir)
                 st.session_state.processed_result = None
+                st.session_state.input_image_path = None
 
             # Clear progress
             progress_bar.empty()
